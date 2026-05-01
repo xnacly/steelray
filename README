@@ -1,0 +1,31 @@
+Steelray
+========
+
+steelray is a very simplistic hobbyist kernel written in rust.
+
+
+Compilation
+-----------
+
+Requires:
+
+- aarch64-linux-gnu-gcc
+- aarch64-linux-gnu-binutils
+- aarch64-unknown-none rust toolchain
+
+    make
+
+Running
+-------
+
+Requires qemu-system-aarch64
+
+    make run
+
+(Exit with Ctrl+A x)
+
+Attaching
+---------
+
+    gdb
+    > target remote :1234
