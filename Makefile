@@ -4,15 +4,9 @@ TARGET = aarch64-unknown-none
 # Output ELF loaded by QEMU.
 KERNEL = kernel.elf
 
-# Emulator for the AArch64 `virt` machine.
 QEMU = qemu-system-aarch64
+QEMU_RAM = 128M
 
-# Keep the kernel freestanding and predictable:
-# - abort instead of unwinding panics
-# - optimize for a smaller early image
-# - generate static code with no dynamic relocation dependency
-# - use the custom linker script that fixes the load address and sections
-# - garbage-collect unused sections
 RUSTFLAGS = \
 	-C panic=abort \
 	-C opt-level=s \
@@ -41,6 +35,7 @@ run: all
 	$(QEMU) \
 	  -M virt \
 	  -cpu cortex-a57 \
+	  -m $(QEMU_RAM) \
 	  -nographic \
 	  -kernel $(KERNEL)
 
@@ -50,6 +45,7 @@ debug: all
 	$(QEMU) \
 	  -M virt \
 	  -cpu cortex-a57 \
+	  -m $(QEMU_RAM) \
 	  -nographic \
 	  -S -s \
 	  -kernel $(KERNEL)
