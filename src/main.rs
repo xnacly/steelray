@@ -5,9 +5,9 @@ use core::panic::PanicInfo;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn kmain() -> ! {
-    let p = 0x100000 as *mut u64;
+    let p = 0x40100000 as *mut u64;
     unsafe {
-        *p = 0xCAFEBABE;
+        *p = 0xDEADAFFE;
     }
 
     loop {}
