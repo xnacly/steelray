@@ -1,7 +1,7 @@
 Steelray
 ========
 
-steelray is a very simplistic hobbyist kernel written in rust.
+steelray is a very simplistic aarch64 hobbyist kernel written in rust.
 
 
 Compilation
