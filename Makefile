@@ -1,21 +1,59 @@
+# Rust target triple for bare-metal 64-bit ARM.
 TARGET = aarch64-unknown-none
 
+# Output ELF loaded by QEMU.
+KERNEL = kernel.elf
+
+# Emulator for the AArch64 `virt` machine.
+QEMU = qemu-system-aarch64
+
+# Keep the kernel freestanding and predictable:
+# - abort instead of unwinding panics
+# - optimize for a smaller early image
+# - generate static code with no dynamic relocation dependency
+# - use the custom linker script that fixes the load address and sections
+# - garbage-collect unused sections
+RUSTFLAGS = \
+	-C panic=abort \
+	-C opt-level=s \
+	-C debuginfo=0 \
+	-C debug-assertions=off \
+	-C overflow-checks=off \
+	-C relocation-model=static \
+	-C link-arg=-Tlinkmyballs.ld \
+	-C link-arg=--gc-sections
+
+# These names are commands, not files that make should look for.
+.PHONY: all run debug clean
+
+# Build the kernel directly with rustc. Cargo is not needed yet because this
+# kernel has no dependencies or build script.
 all:
 	rustc \
 		--target $(TARGET) \
-		-C panic=abort \
-		-C overflow-checks=off \
-	    -C link-arg=-Tlinkmyballs.ld \
-		-o kernel.elf \
+		$(RUSTFLAGS) \
+		-o $(KERNEL) \
 		src/main.rs
 
+# Boot the kernel in QEMU. `-nographic` connects the emulated serial port to
+# this terminal, which is why UART output appears in `make run`.
 run: all
-	qemu-system-aarch64 \
+	$(QEMU) \
+	  -M virt \
+	  -cpu cortex-a57 \
+	  -nographic \
+	  -kernel $(KERNEL)
+
+# Start QEMU paused and expose a GDB server on localhost:1234. This lets a
+# debugger attach before the first instruction executes.
+debug: all
+	$(QEMU) \
 	  -M virt \
 	  -cpu cortex-a57 \
 	  -nographic \
 	  -S -s \
-	  -kernel kernel.elf
+	  -kernel $(KERNEL)
 
+# Remove the generated kernel image.
 clean:
-	rm kernel.elf
+	rm -f $(KERNEL)

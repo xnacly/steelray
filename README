@@ -3,14 +3,31 @@ Steelray
 
 steelray is a very simplistic aarch64 hobbyist kernel written in rust.
 
+What Boots
+----------
+
+QEMU loads `kernel.elf` at address `0x40000000` for the AArch64 `virt`
+machine. The linker script places `_start` at that address, so the first code
+that runs is the small assembly block in `src/main.rs`.
+
+The boot path is:
+
+1. `_start` loads `stack_top` into the AArch64 stack pointer.
+2. `_start` clears the `.bss` section, which is where zero-initialized globals
+   live.
+3. `_start` branches into Rust by calling `kmain`.
+4. `kmain` initializes the PL011 UART exposed by QEMU at `0x09000000`.
+5. `kmain` prints `steelray: booted` and then spins forever.
+
+There is no operating system below this code. The linker script, assembly stub,
+panic handler, and UART writes are the minimal runtime environment.
+
 
 Compilation
 -----------
 
 Requires:
 
-- aarch64-linux-gnu-gcc
-- aarch64-linux-gnu-binutils
 - aarch64-unknown-none rust toolchain
 
     make
@@ -26,6 +43,10 @@ Requires qemu-system-aarch64
 
 Attaching
 ---------
+
+Start QEMU paused with a GDB stub:
+
+    make debug
 
     gdb
     > target remote :1234
