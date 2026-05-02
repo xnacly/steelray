@@ -9,8 +9,6 @@ Compilation
 
 Requires:
 
-- aarch64-linux-gnu-gcc
-- aarch64-linux-gnu-binutils
 - aarch64-unknown-none rust toolchain
 
     make
@@ -26,6 +24,10 @@ Requires qemu-system-aarch64
 
 Attaching
 ---------
+
+Start QEMU paused with a GDB stub:
+
+    make debug
 
     gdb
     > target remote :1234
