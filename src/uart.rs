@@ -1,9 +1,12 @@
 use core::fmt::{self, Write};
 
+/// Abstraction for interacting with the UART, see [UART - wikipedia](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) and more specifically
+/// for the PL011 qemu emulates: [PrimeCell UART (PL011) Technical Reference Manual](https://developer.arm.com/documentation/ddi0183/g/)
+///
+/// QEMU -machine virt exposes a PL011 UART, -nographic (or -serial) wires it to the terminal.
 pub struct Uart;
 
 impl Uart {
-    // QEMU -machine virt exposes a PL011 UART, -nographic (or -serial) wires it to the terminal.
     pub const UART_BASE: usize = 0x0900_0000;
     pub const UART_DR: *mut u32 = (Self::UART_BASE + 0x000) as *mut u32;
     pub const UART_FR: *const u32 = (Self::UART_BASE + 0x018) as *const u32;
