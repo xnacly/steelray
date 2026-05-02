@@ -41,7 +41,7 @@ impl Uart {
     }
 
     /// Sends one character through the UART transmit FIFO
-    pub fn putc(c: char) {
+    pub fn putc(c: u8) {
         unsafe {
             while Self::UART_FR.read_volatile() & Self::UART_FR_TXFF != 0 {}
             Self::UART_DR.write_volatile(c as u32);
@@ -52,7 +52,7 @@ impl Uart {
 impl Write for Uart {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         for b in s.bytes() {
-            Uart::putc(b as char);
+            Uart::putc(b);
         }
         Ok(())
     }
