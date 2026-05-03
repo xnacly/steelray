@@ -5,6 +5,7 @@ use core::arch::global_asm;
 use core::panic::PanicInfo;
 
 mod io;
+mod shell;
 mod uart;
 
 global_asm!(include_str!("./boot.s"));
@@ -15,10 +16,15 @@ pub extern "C" fn kmain() -> ! {
     kprintln!("initialised uart");
     kprintln!(
         "cntvct_el0={},cntfrq_el0={}",
-        io::cntvct_el0(),
-        io::cntfrq_el0()
+        io::aarch64::cntvct_el0(),
+        io::aarch64::cntfrq_el0()
     );
-    kprintln!("entering spin loop");
+    kprintln!("entering shell");
+
+    let mut xsh = shell::Xsh::new();
+    if let Err(err) = xsh.start() {
+        kprintln!("shell error ({:?}), entering spin loop", err)
+    }
 
     loop {
         core::hint::spin_loop();
@@ -26,8 +32,8 @@ pub extern "C" fn kmain() -> ! {
 }
 
 #[panic_handler]
-fn panic(_: &PanicInfo) -> ! {
-    kprintln!("panic");
+fn panic(info: &PanicInfo) -> ! {
+    kprintln!("panic: {}", info.message());
 
     loop {
         core::hint::spin_loop();
