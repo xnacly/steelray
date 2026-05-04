@@ -1,0 +1,14 @@
+[build]
+target = "aarch64-unknown-none"
+
+[target.aarch64-unknown-none]
+rustflags = [
+  "-C", "panic=abort",
+  "-C", "opt-level=s",
+  "-C", "debuginfo=0",
+  "-C", "debug-assertions=off",
+  "-C", "overflow-checks=off",
+  "-C", "relocation-model=static",
+  "-C", "link-arg=-Tlinkmyballs.ld",
+  "-C", "link-arg=--gc-sections",
+]

@@ -23,7 +23,7 @@ pub extern "C" fn kmain() -> ! {
     kprintln!("entering shell");
 
     let mut xsh = shell::Xsh::new();
-    if let Err(err) = xsh.start() {
+    if let Err(err) = xsh.run() {
         kprintln!("shell error ({:?}), entering spin loop", err)
     }
 
