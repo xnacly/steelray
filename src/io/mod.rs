@@ -3,6 +3,7 @@ use crate::uart;
 use core::fmt::{self, Write};
 
 pub mod aarch64;
+pub mod psci;
 pub mod time;
 
 #[macro_export]

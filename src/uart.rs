@@ -18,6 +18,9 @@ impl Uart {
     pub const UART_ICR: *mut u32 = (Self::UART_BASE + 0x044) as *mut u32;
     pub const UART_FR_TXFF: u32 = 1 << 5;
     pub const UART_FR_RXFE: u32 = 1 << 4;
+    pub const UART_FR_BUSY: u32 = 1 << 3;
+    pub const UART_FR_RXFF: u32 = 1 << 6;
+    pub const UART_FR_TXFE: u32 = 1 << 7;
     pub const UART_CR_UARTEN: u32 = 1 << 0;
     pub const UART_CR_TXE: u32 = 1 << 8;
     pub const UART_CR_RXE: u32 = 1 << 9;
@@ -64,6 +67,30 @@ impl Uart {
                 Some(Self::UART_DR.read_volatile() as u8)
             }
         }
+    }
+
+    pub fn fr() -> u32 {
+        unsafe { Self::UART_FR.read_volatile() }
+    }
+
+    pub fn ibrd() -> u32 {
+        unsafe { Self::UART_IBRD.read_volatile() }
+    }
+
+    pub fn fbrd() -> u32 {
+        unsafe { Self::UART_FBRD.read_volatile() }
+    }
+
+    pub fn lcrh() -> u32 {
+        unsafe { Self::UART_LCRH.read_volatile() }
+    }
+
+    pub fn cr() -> u32 {
+        unsafe { Self::UART_CR.read_volatile() }
+    }
+
+    pub fn imsc() -> u32 {
+        unsafe { Self::UART_IMSC.read_volatile() }
     }
 }
 
