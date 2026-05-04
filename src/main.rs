@@ -15,6 +15,12 @@ global_asm!(include_str!("./boot.s"));
 pub extern "C" fn kmain() -> ! {
     uart::Uart::init();
     kprintln!("initialised uart");
+    kprintln!(concat!(
+        "starting ",
+        env!("CARGO_PKG_NAME"),
+        " ",
+        env!("CARGO_PKG_VERSION")
+    ));
     kprintln!(
         "cntvct_el0={},cntfrq_el0={}",
         io::aarch64::cntvct_el0(),
