@@ -24,42 +24,6 @@ impl Xsh {
         Xsh
     }
 
-    fn target_arch() -> &'static str {
-        if cfg!(target_arch = "aarch64") {
-            "aarch64"
-        } else {
-            "unknown"
-        }
-    }
-
-    fn target_os() -> &'static str {
-        if cfg!(target_os = "none") {
-            "none"
-        } else {
-            "unknown"
-        }
-    }
-
-    fn target_endian() -> &'static str {
-        if cfg!(target_endian = "little") {
-            "little"
-        } else if cfg!(target_endian = "big") {
-            "big"
-        } else {
-            "unknown"
-        }
-    }
-
-    fn target_pointer_width() -> &'static str {
-        if cfg!(target_pointer_width = "64") {
-            "64"
-        } else if cfg!(target_pointer_width = "32") {
-            "32"
-        } else {
-            "unknown"
-        }
-    }
-
     fn print_version(&self) {
         let (sec, usec) = io::time::time_sec_frac();
 
@@ -140,10 +104,8 @@ impl Xsh {
                 PushResult::Complete(line) => {
                     Uart::putc(b'\r');
                     Uart::putc(b'\n');
-                    {
-                        let line = core::str::from_utf8(line).unwrap_or("<invalid utf-8>");
-                        self.dispatch(line);
-                    }
+                    let line = core::str::from_utf8(line).unwrap_or("<invalid utf-8>");
+                    self.dispatch(line);
                     buf.clear();
                     Uart {}.write_str(PROMPT).unwrap();
                 }
